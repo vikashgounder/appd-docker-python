@@ -1,0 +1,26 @@
+version: '3.5'
+services:
+    flask-app:
+        build: .
+        container_name: flask-app
+        hostname: web-flask-app
+        image: flask-app
+        ports:
+            - "8080:8080"
+        volumes:
+            - .:/code
+
+    machine-agent:
+        container_name: machine-agent
+        hostname: machine-agent
+        image: appdynamics/machine-agent-analytics:latest
+        env_file: controller.env
+        environment:
+            - APPDYNAMICS_SIM_ENABLED=true
+            - APPDYNAMICS_DOCKER_ENABLED=true
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /:/hostroot:ro
+        expose:
+            - 9090
